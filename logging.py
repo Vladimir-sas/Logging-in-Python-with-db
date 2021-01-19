@@ -1,5 +1,13 @@
 from tkinter import *
+import sqlite3
 
+conn = sqlite3.connect('configs')
+cur = conn.cursor()
+
+cur.execute("""CREATE TABLE IF NOT EXISTS ent_conf(
+                login TEXT,
+                password TEXT
+                )""")
 
 root = Tk()
 root.geometry("400x400")
@@ -17,10 +25,12 @@ def reg_win(): # окно регистрации
 
     login_var = StringVar()
     password_var = StringVar()
+    nick_var = StringVar()
 
 
     login_label = Label(reg_window,text = "Логин:").place(x=10,y=50)
     password_label = Label(reg_window, text="Пароль:").place(x=10,y=80)
+    password_label = Label(reg_window, text="Имя:").place(x=10, y=20)
 
     login_ent = Entry(reg_window,textvariable = login_var)
     login_ent.place(x=70,y=50)
@@ -28,8 +38,27 @@ def reg_win(): # окно регистрации
     password_ent = Entry(reg_window,textvariable = password_var)
     password_ent.place(x=70,y = 80)
 
+    nick_ent = Entry(reg_window, textvariable = nick_var)
+    nick_ent.place(x=70, y=20)
+
     def add_to_db():#добавление данных в базу
-        print(f'Логин:{login_ent.get()}',f' Пароль:{password_ent.get()}' ,sep = " | ")
+        to_db = (login_ent.get(),password_ent.get())
+        print(f'Логин:{login_ent.get()}',f' Пароль:{password_ent.get()}',f' Имя:{nick_ent.get()}' ,sep = " | ")
+
+        cur.execute('INSERT INTO ent_conf(login, password) VALUES (?,?)',to_db)
+
+        cur.execute('SELECT login,password FROM ent_conf')
+        rows = cur.fetchall()
+
+
+        for row in rows:
+            print(row)
+
+        # cur.execute('DELETE from ent_conf')
+
+
+        conn.commit()
+
 
 
 
@@ -42,8 +71,10 @@ def enter_win():#окно входа
 
 reg_btn = Button(root, text="Регистрация", width=20, background="green", foreground="black",activebackground="red",command = reg_win).place(x=130, y=200)
 
-enter_btn = Button(root, text="Вкид", width=20, background="green", foreground="black", activebackground="red",command = enter_win).place(x=130, y=230)
+enter_btn = Button(root, text="Вход", width=20, background="green", foreground="black", activebackground="red",command = enter_win).place(x=130, y=230)
 
 
 
 root.mainloop()
+
+
