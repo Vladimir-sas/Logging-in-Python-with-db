@@ -76,5 +76,3 @@ enter_btn = Button(root, text="Вход", width=20, background="green", foregrou
 
 
 root.mainloop()
-
-
